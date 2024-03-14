@@ -1,0 +1,34 @@
+---
+# tasks file for vdi-refresh
+- name: Install packages from vars file
+  ansible.builtin.package:
+    name:  {{ installed_pkgs }}
+    state: present
+
+- name: Make Ansible folder for git pulls
+  ansible.builtin.file:
+    path: "/home/padawan/ansible"
+    state: directory
+    mode: 0775
+
+- name: untar documents file 
+  ansible.builtin.unarchive:
+    src: outlook.tar.gz
+    dest: 'home/padawan/Documents/'
+
+- name: Add colour environment variable to the remote user's shell.
+  ansible.builtin.lineinfile:
+    dest: ".bashrc"
+    line: |
+        COLOR_CODE="\[\e[0;31m\]"
+        RESET_COLOR="\[\e[0m\]"
+        DOMAIN_COLOR="\[\e[0;32m\]"
+        BRANCH_COLOR="\[\e[0;33m\]"
+
+        parse_git_branch() {
+          git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+        }
+
+        PS1="[${COLOR_CODE}${USER}${RESET_COLOR}@\h ${DOMAIN_COLOR}${RESET_COLOR}\w] ${BRANCH_COLOR}\$(parse_git_branch)${RESET_COLOR}\$ "
+    owner: padawan 
+

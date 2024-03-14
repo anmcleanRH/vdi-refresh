@@ -1,0 +1,6 @@
+---
+# vars file for vdi-refresh
+installed_pkgs:
+  - ansible
+  - tree
+  
